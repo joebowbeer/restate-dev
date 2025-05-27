@@ -1,0 +1,74 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: greeter
+#   labels:
+#     app: greeter
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: greeter
+#   template:
+#     metadata:
+#       labels:
+#         app: greeter
+#     spec:
+#       containers:
+#         - name: greeter
+#           image: greeter
+#           imagePullPolicy: IfNotPresent
+#           ports:
+#           - containerPort: 9080
+#           # livenessProbe:
+#           #   httpGet:
+#           #     path: /actuator/health/liveness
+#           #     port: 9080
+#           #   initialDelaySeconds: 15
+#           #   periodSeconds: 10
+#           # readinessProbe:
+#           #   httpGet:
+#           #     path: /actuator/health/readiness
+#           #     port: 9080
+#           #   initialDelaySeconds: 16
+#           #   periodSeconds: 5
+#           env: []
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: greeter
+#   labels:
+#     app: greeter
+# spec:
+#   type: ClusterIP
+#   selector:
+#     app: greeter
+#   ports:
+#     - protocol: TCP
+#       port: 9080
+#       targetPort: 9080
+---
+apiVersion: restate.dev/v1beta1
+kind: RestateDeployment
+metadata:
+  name: greeter
+spec:
+  replicas: 1
+  restate:
+    register:
+      cluster: restate-test
+  selector:
+    matchLabels:
+      app: greeter
+  template:
+    metadata:
+      labels:
+        app: greeter
+    spec:
+      containers:
+      - image: greeter
+        ports:
+        - name: restate
+          containerPort: 9080
+        name: greeter

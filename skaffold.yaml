@@ -1,0 +1,32 @@
+apiVersion: skaffold/v4beta13
+kind: Config
+metadata:
+  name: restate-dev-greeter
+build:
+  artifacts:
+    - image: greeter
+      context: .
+      docker:
+        dockerfile: Dockerfile
+# if you want to use buildpacks, uncomment the following and comment the above
+#    - image: greeter
+#      context: .
+#      buildpacks:
+#        builder: 'paketobuildpacks/builder:base'
+portForward: []
+  # - resourceType: replicaset
+  #   resourceName: greeter
+  #   port: 9080
+  #   localPort: 9080
+  # - resourceType: statefulset
+  #   resourceName: restate-0
+  #   port: 9070
+  #   localPort: 9070
+manifests:
+  rawYaml:
+    - k8s/*
+resourceSelector:
+  allow:
+    - groupKind: RestateDeployment.restate.dev
+      image: [".*"]
+      labels: [".*"]
